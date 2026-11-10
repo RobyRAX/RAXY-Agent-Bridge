@@ -43,7 +43,7 @@ def refresh(client, run):
 
 def main():
     parser = argparse.ArgumentParser(description="Handoff a Codex plan to Antigravity Desktop")
-    parser.add_argument("--base-url", default="http://127.0.0.1:14235")
+    parser.add_argument("--base-url", help="Override automatic Antigravity Desktop discovery")
     sub = parser.add_subparsers(dest="command", required=True)
     start = sub.add_parser("start")
     start.add_argument("--plan", required=True)

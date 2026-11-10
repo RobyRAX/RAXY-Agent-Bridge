@@ -36,7 +36,7 @@ python agy_desktop.py start --workspace C:\path\project --message "Pelajari proj
 python agy_desktop.py status --conversation-id CONVERSATION_ID
 ```
 
-The adapter reads the app's default model, sends it with the message, and verifies both project ID and workspace URI before sending. This is an internal Antigravity interface observed in Desktop 44.9.1, so it may change after an app update. The default local port is `14235`; use `--base-url` if the app starts on another port.
+The adapter reads the app's default model, sends it with the message, and verifies both project ID and workspace URI before sending. This is an internal Antigravity interface observed in Desktop 44.9.1, so it may change after an app update. On Windows, the bridge discovers the local port from Antigravity's running language server and checks the RPC before using it. Use `--base-url` to override discovery.
 
 ## Desktop plan handoff
 

@@ -6,6 +6,7 @@ The endpoint is an internal app interface and may change with app updates.
 import argparse
 import json
 import re
+import subprocess
 import sys
 import uuid
 from pathlib import Path
@@ -17,8 +18,57 @@ from urllib.request import Request, urlopen
 SERVICE = "exa.language_server_pb.LanguageServerService"
 
 
+def desktop_base_urls():
+    """Find loopback listeners owned by Antigravity's language server."""
+    if sys.platform != "win32":
+        raise RuntimeError("Automatic Antigravity Desktop discovery requires Windows; use --base-url")
+    script = r"""
+$antigravityProcessIds = @(Get-Process -Name language_server -ErrorAction SilentlyContinue |
+    Where-Object { $_.Path -like '*\antigravity\resources\bin\language_server.exe' } |
+    ForEach-Object { $_.Id })
+if ($antigravityProcessIds.Count -gt 0) {
+    Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
+        Where-Object { $antigravityProcessIds -contains $_.OwningProcess -and
+            $_.LocalAddress -in @('127.0.0.1', '::1') } |
+        ForEach-Object { '{0}|{1}' -f $_.LocalAddress, $_.LocalPort } |
+        Select-Object -Unique
+}
+"""
+    try:
+        result = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", script],
+            capture_output=True, text=True, timeout=10, check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise RuntimeError("Could not inspect Antigravity Desktop listeners") from exc
+    if result.returncode:
+        raise RuntimeError("Could not inspect Antigravity Desktop listeners")
+    urls = []
+    for line in result.stdout.splitlines():
+        address, separator, port = line.strip().partition("|")
+        if separator and port.isdecimal() and address in ("127.0.0.1", "::1"):
+            host = "[::1]" if address == "::1" else address
+            urls.append(f"http://{host}:{port}")
+    return urls
+
+
 class DesktopClient:
-    def __init__(self, base="http://127.0.0.1:14235"):
+    def __init__(self, base=None):
+        if base is not None:
+            self._connect(base)
+            return
+        last_error = None
+        for candidate in desktop_base_urls():
+            try:
+                self._connect(candidate)
+                projects = self.call("ListProjects", {}, timeout=3)
+                if isinstance(projects, dict) and "projectIds" in projects:
+                    return
+            except (RuntimeError, OSError, URLError) as exc:
+                last_error = exc
+        raise RuntimeError("Antigravity Desktop local RPC service is unavailable") from last_error
+
+    def _connect(self, base):
         self.base = base.rstrip("/")
         try:
             with urlopen(self.base + "/", timeout=5) as response:
@@ -30,7 +80,7 @@ class DesktopClient:
             raise RuntimeError("Antigravity Desktop did not provide a CSRF token")
         self.token = match.group(1)
 
-    def call(self, method, payload):
+    def call(self, method, payload, timeout=30):
         request = Request(
             f"{self.base}/{SERVICE}/{method}",
             data=json.dumps(payload).encode("utf-8"),
@@ -38,7 +88,7 @@ class DesktopClient:
             method="POST",
         )
         try:
-            with urlopen(request, timeout=30) as response:
+            with urlopen(request, timeout=timeout) as response:
                 return json.load(response)
         except HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="replace")
@@ -124,7 +174,7 @@ def send_message(client, conversation_id, message, model=None):
 
 def main():
     parser = argparse.ArgumentParser(description="Use Antigravity Desktop's local RPC interface")
-    parser.add_argument("--base-url", default="http://127.0.0.1:14235")
+    parser.add_argument("--base-url", help="Override automatic Antigravity Desktop discovery")
     sub = parser.add_subparsers(dest="command", required=True)
     start = sub.add_parser("start")
     start.add_argument("--workspace", required=True)
