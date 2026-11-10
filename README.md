@@ -17,13 +17,13 @@ To use these skills from this checkout, copy or link each skill folder into your
 ## Commands
 
 ```powershell
-python bridge.py start --plan C:\path\plan.md --workspace C:\path\project --max-iterations 3
+python bridge.py start --plan C:\path\plan.md --workspace C:\path\project --max-iterations 1
 python bridge.py revise --run-id RUN_ID --feedback C:\path\feedback.md
 python bridge.py approve --run-id RUN_ID
 python bridge.py status --run-id RUN_ID
 ```
 
-Each `start` or `revise` call consumes one iteration and returns JSON. `plan_updated` indicates whether Antigravity changed the plan during that turn. Codex reads the updated checklist and report, checks any claims that need verification, then approves or creates feedback for another turn. At the iteration limit, further `revise` calls fail. Run records are kept under `%LOCALAPPDATA%\RaxyAgentBridge\runs` on Windows.
+The default limit is 1 iteration when `--max-iterations` is omitted. Each `start` or `revise` call consumes one iteration and returns JSON. `plan_updated` indicates whether Antigravity changed the plan during that turn. Codex reads the updated checklist and report, checks any claims that need verification, then approves or creates feedback for another turn. At the iteration limit, further `revise` calls fail. Run records are kept under `%LOCALAPPDATA%\RaxyAgentBridge\runs` on Windows.
 
 Antigravity headless mode may deny actions that require interactive permission while still reporting a successful turn. Review the returned `diagnostics` and workspace changes before approving. Configure scoped Antigravity permissions separately if needed.
 
@@ -43,7 +43,7 @@ The adapter reads the app's default model, sends it with the message, and verifi
 The `handoff-agy` Codex skill uses `desktop_handoff.py` for a reviewed plan workflow without computer use:
 
 ```powershell
-python desktop_handoff.py start --plan C:\path\project\plan.md --workspace C:\path\project --max-iterations 3
+python desktop_handoff.py start --plan C:\path\project\plan.md --workspace C:\path\project --max-iterations 1
 python desktop_handoff.py status --run-id RUN_ID
 python desktop_handoff.py revise --run-id RUN_ID --feedback C:\path\feedback.md
 python desktop_handoff.py approve --run-id RUN_ID

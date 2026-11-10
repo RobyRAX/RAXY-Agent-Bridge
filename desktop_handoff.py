@@ -48,7 +48,7 @@ def main():
     start = sub.add_parser("start")
     start.add_argument("--plan", required=True)
     start.add_argument("--workspace", required=True)
-    start.add_argument("--max-iterations", type=int, default=3)
+    start.add_argument("--max-iterations", type=int, default=1)
     for name in ("status", "approve"):
         sub.add_parser(name).add_argument("--run-id", required=True)
     revise = sub.add_parser("revise")

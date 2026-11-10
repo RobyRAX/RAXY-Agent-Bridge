@@ -103,7 +103,7 @@ def main():
     start = sub.add_parser("start")
     start.add_argument("--plan", required=True)
     start.add_argument("--workspace", required=True)
-    start.add_argument("--max-iterations", type=int, default=3)
+    start.add_argument("--max-iterations", type=int, default=1)
     revise = sub.add_parser("revise")
     revise.add_argument("--run-id", required=True)
     revise.add_argument("--feedback", required=True)
