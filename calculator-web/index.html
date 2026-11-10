@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="theme.js" defer></script>
+  <script src="calculator.js" defer></script>
+  <script src="currency.js" defer></script>
+</head>
+<body>
+  <main class="calculator-container">
+    <section class="calculator" aria-label="Electronic Calculator">
+      <div class="theme-control">
+        <label for="theme-select" class="theme-label">Theme</label>
+        <select id="theme-select" class="theme-select" aria-label="Select color theme">
+          <option value="slate">Slate</option>
+          <option value="light">Light</option>
+          <option value="ocean">Ocean</option>
+          <option value="sunset">Sunset</option>
+        </select>
+      </div>
+      <div class="calculator-screen" aria-label="Calculator display">
+        <div id="expression" class="expression" aria-live="polite" aria-atomic="true"></div>
+        <div id="display" class="display" role="status" aria-live="polite" aria-atomic="true">0</div>
+      </div>
+      <div class="calculator-keypad" role="group" aria-label="Calculator keypad">
+        <button type="button" class="btn btn-function" data-action="clear" aria-label="Clear">C</button>
+        <button type="button" class="btn btn-function" data-action="backspace" aria-label="Backspace">⌫</button>
+        <button type="button" class="btn btn-function" data-action="percent" aria-label="Percent">%</button>
+        <button type="button" class="btn btn-operator" data-action="operator" data-value="/" aria-label="Divide">÷</button>
+
+        <button type="button" class="btn btn-digit" data-action="digit" data-value="7" aria-label="7">7</button>
+        <button type="button" class="btn btn-digit" data-action="digit" data-value="8" aria-label="8">8</button>
+        <button type="button" class="btn btn-digit" data-action="digit" data-value="9" aria-label="9">9</button>
+        <button type="button" class="btn btn-operator" data-action="operator" data-value="*" aria-label="Multiply">×</button>
+
+        <button type="button" class="btn btn-digit" data-action="digit" data-value="4" aria-label="4">4</button>
+        <button type="button" class="btn btn-digit" data-action="digit" data-value="5" aria-label="5">5</button>
+        <button type="button" class="btn btn-digit" data-action="digit" data-value="6" aria-label="6">6</button>
+        <button type="button" class="btn btn-operator" data-action="operator" data-value="-" aria-label="Subtract">−</button>
+
+        <button type="button" class="btn btn-digit" data-action="digit" data-value="1" aria-label="1">1</button>
+        <button type="button" class="btn btn-digit" data-action="digit" data-value="2" aria-label="2">2</button>
+        <button type="button" class="btn btn-digit" data-action="digit" data-value="3" aria-label="3">3</button>
+        <button type="button" class="btn btn-operator" data-action="operator" data-value="+" aria-label="Add">+</button>
+
+        <button type="button" class="btn btn-function" data-action="sign" aria-label="Toggle positive or negative sign">±</button>
+        <button type="button" class="btn btn-digit" data-action="digit" data-value="0" aria-label="0">0</button>
+        <button type="button" class="btn btn-digit" data-action="decimal" aria-label="Decimal point">.</button>
+        <button type="button" class="btn btn-equals" data-action="equals" aria-label="Equals">=</button>
+      </div>
+      <section class="currency-converter" aria-labelledby="currency-heading">
+        <h2 id="currency-heading" class="currency-heading">Currency Converter</h2>
+        <div class="currency-field">
+          <label for="currency-amount" class="currency-label">Amount</label>
+          <input type="number" id="currency-amount" class="currency-input" value="1" min="0" step="any" placeholder="Enter amount" inputmode="decimal">
+        </div>
+        <div class="currency-selectors">
+          <div class="currency-select-group">
+            <label for="currency-from" class="currency-label">From</label>
+            <select id="currency-from" class="currency-select" aria-label="From currency">
+              <option value="USD" selected>USD</option>
+              <option value="IDR">IDR</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="JPY">JPY</option>
+              <option value="SGD">SGD</option>
+              <option value="AUD">AUD</option>
+              <option value="CAD">CAD</option>
+              <option value="CHF">CHF</option>
+            </select>
+          </div>
+          <button type="button" id="currency-swap" class="currency-swap-btn" aria-label="Swap currencies" title="Swap currencies">⇄</button>
+          <div class="currency-select-group">
+            <label for="currency-to" class="currency-label">To</label>
+            <select id="currency-to" class="currency-select" aria-label="To currency">
+              <option value="USD">USD</option>
+              <option value="IDR" selected>IDR</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="JPY">JPY</option>
+              <option value="SGD">SGD</option>
+              <option value="AUD">AUD</option>
+              <option value="CAD">CAD</option>
+              <option value="CHF">CHF</option>
+            </select>
+          </div>
+        </div>
+        <button type="button" id="currency-convert" class="currency-convert-btn">Convert</button>
+        <div id="currency-status" class="currency-status" role="status" aria-live="polite">
+          <p class="currency-status-placeholder">Click Convert to calculate reference rate.</p>
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>
