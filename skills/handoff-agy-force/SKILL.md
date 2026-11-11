@@ -5,6 +5,8 @@ description: Explicitly hand a written Codex plan to Antigravity Desktop for imm
 
 # Force handoff to Antigravity Desktop
 
+For each handoff, offer Robby `Codex Review` or `No Codex Review`. Default to `Codex Review` if he does not specify. Add `--review codex` or `--review none` to the `start` command below. In no-review mode, poll until `completed_unreviewed`, then report the run ID, plan path, and AGY outcome. Stop without reading the implementation, revising, approving, or claiming verification. Steps 4-6 below apply only to Codex review mode.
+
 Use only when the user explicitly invokes `$handoff-agy-force`. That invocation authorizes immediate implementation of the identified written plan, so do not ask for separate plan approval. If the same request says to plan only or not implement, follow that instruction instead. Do not infer force handoff from a feature description or from merely finishing a plan.
 
 Use `<repo-root>\desktop_handoff.py`. Do not use computer use or AGY CLI headless sessions. The Desktop RPC is an internal interface observed in Antigravity 44.9.1 and may change after updates.

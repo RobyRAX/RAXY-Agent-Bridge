@@ -29,7 +29,7 @@ def refresh(client, run):
     run["num_steps"] = trajectory.get("numTotalSteps", 0)
     if run["agent_status"] == "CASCADE_RUN_STATUS_IDLE" and run["num_steps"] > 0:
         run["iterations"] += 1
-        run["status"] = "awaiting_review"
+        run["status"] = "awaiting_review" if run.get("review", "codex") == "codex" else "completed_unreviewed"
         run["plan_updated"] = plan_digest(run) != run["plan_before"]
         run["updated_at"] = datetime.now(timezone.utc).isoformat()
         for step in reversed(trajectory.get("trajectory", {}).get("steps", [])):
@@ -49,6 +49,7 @@ def main():
     start.add_argument("--plan", required=True)
     start.add_argument("--workspace", required=True)
     start.add_argument("--max-iterations", type=int, default=1)
+    start.add_argument("--review", choices=("codex", "none"), default="codex")
     for name in ("status", "approve"):
         sub.add_parser(name).add_argument("--run-id", required=True)
     revise = sub.add_parser("revise")
@@ -68,7 +69,7 @@ def main():
         run = {"id": str(uuid.uuid4()), "transport": "agy-desktop", "plan": str(plan),
                "workspace": str(workspace), "project_id": project["id"],
                "conversation_id": None, "max_iterations": args.max_iterations,
-               "iterations": 0, "status": "starting", "plan_before": None,
+               "iterations": 0, "status": "starting", "plan_before": None, "review": args.review,
                "created_at": datetime.now(timezone.utc).isoformat()}
         run["plan_before"] = plan_digest(run)
         prompt = ("Implement the approved plan only in this workspace: " + str(workspace) + ". "
@@ -85,6 +86,8 @@ def main():
             raise ValueError("Run is not an Antigravity Desktop handoff")
         run = refresh(client, run)
         if args.command == "revise":
+            if run.get("review", "codex") != "codex":
+                raise ValueError("An unreviewed run cannot be revised by Codex")
             if run["status"] != "awaiting_review" or run["iterations"] >= run["max_iterations"]:
                 raise ValueError("Run is not ready for revision or maximum iterations reached")
             feedback = Path(args.feedback).resolve()
@@ -98,6 +101,8 @@ def main():
             run["status"] = "running"
             save(run)
         elif args.command == "approve":
+            if run.get("review", "codex") != "codex":
+                raise ValueError("An unreviewed run cannot be approved by Codex")
             if run["status"] != "awaiting_review":
                 raise ValueError("Only a run awaiting review can be approved")
             run["status"] = "approved"

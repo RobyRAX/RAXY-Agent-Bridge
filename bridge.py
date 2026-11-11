@@ -42,12 +42,15 @@ def plan_digest(run):
 
 
 def plan_instructions(run):
+    closing = ("Your final response may be brief because Codex will review the plan file."
+               if run.get("review", "codex") == "codex" else
+               "Your final response should summarize the outcome for Robby because Codex will not review the result.")
     return (f"The authoritative plan file is {run['plan']}. Edit this file as you work. "
             "Mark a checklist item [x] only after its work is complete; leave incomplete items [ ] and explain why. "
             "Keep the existing plan and spec requirements intact. Add or update a '## Execution Report' section "
             "at the end of the plan with concise English notes on changed files, verification actually performed, "
             "remaining issues, and any checklist items left open. Do not claim verification you did not perform. "
-            "Save the plan before ending your turn. Your final response may be brief because Codex will review the plan file.\n\n")
+            "Save the plan before ending your turn. " + closing + "\n\n")
 
 
 def invoke_agy(run, prompt):
@@ -88,7 +91,7 @@ def run_turn(run, prompt):
         raise
     run["conversation_id"] = result["conversation_id"]
     run["iterations"] += 1
-    run["status"] = "awaiting_review"
+    run["status"] = "awaiting_review" if run.get("review", "codex") == "codex" else "completed_unreviewed"
     run["updated_at"] = datetime.now(timezone.utc).isoformat()
     run["last_result"] = result.get("response", "")
     run["diagnostics"] = diagnostics
@@ -104,6 +107,7 @@ def main():
     start.add_argument("--plan", required=True)
     start.add_argument("--workspace", required=True)
     start.add_argument("--max-iterations", type=int, default=1)
+    start.add_argument("--review", choices=("codex", "none"), default="codex")
     revise = sub.add_parser("revise")
     revise.add_argument("--run-id", required=True)
     revise.add_argument("--feedback", required=True)
@@ -123,7 +127,7 @@ def main():
         if args.max_iterations < 1:
             raise ValueError("Maximum iterations must be at least 1")
         run = {"id": str(uuid.uuid4()), "plan": str(plan), "workspace": str(workspace),
-               "max_iterations": args.max_iterations, "iterations": 0, "status": "ready",
+               "max_iterations": args.max_iterations, "iterations": 0, "status": "ready", "review": args.review,
                "conversation_id": None, "created_at": datetime.now(timezone.utc).isoformat()}
         save(run)
         prompt = ("Implement the approved plan below in this workspace. Follow its instructions and workspace rules. "
@@ -133,6 +137,8 @@ def main():
     else:
         run = load(args.run_id)
         if args.command == "revise":
+            if run.get("review", "codex") != "codex":
+                raise ValueError("An unreviewed run cannot be revised by Codex")
             feedback = Path(args.feedback).resolve()
             if not feedback.is_file():
                 raise ValueError("Feedback must be a file")
@@ -141,6 +147,8 @@ def main():
                       + feedback.read_text(encoding="utf-8"))
             run = run_turn(run, prompt)
         elif args.command == "approve":
+            if run.get("review", "codex") != "codex":
+                raise ValueError("An unreviewed run cannot be approved by Codex")
             if run["status"] != "awaiting_review":
                 raise ValueError("Only a run awaiting review can be approved")
             run["status"] = "approved"

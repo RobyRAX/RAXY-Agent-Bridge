@@ -5,6 +5,8 @@ description: Explicitly hand a written Codex plan to Antigravity CLI for immedia
 
 # Force handoff to Antigravity CLI
 
+For each handoff, offer Robby `Codex Review` or `No Codex Review`. Default to `Codex Review` if he does not specify. Add `--review codex` or `--review none` to the `start` command below. In no-review mode, the CLI returns `completed_unreviewed`; report the run ID, plan path, and AGY outcome. Stop without reading the implementation, revising, approving, or claiming verification. Steps 4-6 below apply only to Codex review mode.
+
 Use only when the user explicitly invokes `$handoff-agy-cli-force`. That invocation authorizes implementation of the identified written plan now, so do not ask for a separate plan approval. If the user also says to plan only or not implement, follow that instruction instead. Do not infer force handoff from a feature description or from merely finishing a plan.
 
 Use the local bridge at `<repo-root>\bridge.py`. This CLI route does not guarantee a visible conversation in Antigravity Desktop.

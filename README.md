@@ -16,6 +16,8 @@ To use these skills from this checkout, copy or link each skill folder into your
 
 ## Commands
 
+Each handoff accepts `--review codex` (default) or `--review none` on `start`, for both CLI and Desktop. In no-review mode, AGY's first completed turn receives status `completed_unreviewed`. Codex reports the run ID, plan path, and AGY outcome without reviewing or approving the work. `revise` and `approve` reject no-review runs. The choice cannot change during a run; existing runs without a stored choice use Codex review.
+
 ```powershell
 python bridge.py start --plan C:\path\plan.md --workspace C:\path\project --max-iterations 1
 python bridge.py revise --run-id RUN_ID --feedback C:\path\feedback.md
