@@ -16,10 +16,10 @@ To use these skills from this checkout, copy or link each skill folder into your
 
 ## Commands
 
-Each handoff accepts `--review codex` (default) or `--review none` on `start`, for both CLI and Desktop. In no-review mode, AGY's first completed turn receives status `completed_unreviewed`. Codex reports the run ID, plan path, and AGY outcome without reviewing or approving the work. `revise` and `approve` reject no-review runs. The choice cannot change during a run; existing runs without a stored choice use Codex review.
+Before every normal or force handoff, Codex asks Robby to choose `Codex Review` or `No Codex Review` unless he already chose for that handoff. Both CLI and Desktop `start` require `--review codex` or `--review none`; there is no default. In no-review mode, AGY's first completed turn receives status `completed_unreviewed`. Codex reports the run ID, plan path, and AGY outcome without reviewing or approving the work. `revise` and `approve` reject no-review runs. The choice cannot change during a run; existing runs without a stored choice use Codex review.
 
 ```powershell
-python bridge.py start --plan C:\path\plan.md --workspace C:\path\project --max-iterations 1
+python bridge.py start --plan C:\path\plan.md --workspace C:\path\project --max-iterations 1 --review codex
 python bridge.py revise --run-id RUN_ID --feedback C:\path\feedback.md
 python bridge.py approve --run-id RUN_ID
 python bridge.py status --run-id RUN_ID
@@ -45,7 +45,7 @@ The adapter reads the app's default model, sends it with the message, and verifi
 The `handoff-agy` Codex skill uses `desktop_handoff.py` for a reviewed plan workflow without computer use:
 
 ```powershell
-python desktop_handoff.py start --plan C:\path\project\plan.md --workspace C:\path\project --max-iterations 1
+python desktop_handoff.py start --plan C:\path\project\plan.md --workspace C:\path\project --max-iterations 1 --review codex
 python desktop_handoff.py status --run-id RUN_ID
 python desktop_handoff.py revise --run-id RUN_ID --feedback C:\path\feedback.md
 python desktop_handoff.py approve --run-id RUN_ID

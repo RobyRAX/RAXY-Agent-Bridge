@@ -5,7 +5,7 @@ description: Hand an approved Codex implementation plan to Antigravity CLI, then
 
 # Handoff to Antigravity CLI
 
-For each handoff, offer Robby `Codex Review` or `No Codex Review`. Default to `Codex Review` if he does not specify. Add `--review codex` or `--review none` to the `start` command below. In no-review mode, the CLI returns `completed_unreviewed`; report the run ID, plan path, and AGY outcome. Stop without reading the implementation, revising, approving, or claiming verification. Steps 4-6 below apply only to Codex review mode.
+Before invoking `start`, ask Robby whether he wants `Codex Review` or `No Codex Review` at the end, and wait for his answer. If he already explicitly chose for this handoff, use that choice. Do not infer it from a previous handoff. Add the required `--review codex` or `--review none` to `start`. In no-review mode, the CLI returns `completed_unreviewed`; report the run ID, plan path, and AGY outcome. Stop without reading the implementation, revising, approving, or claiming verification. Steps 4-6 below apply only to Codex review mode.
 
 Use this skill after the user explicitly approves implementation of a written plan. The Codex chat remains the planner and, when selected, reviewer. This skill uses the local bridge at `<repo-root>\bridge.py`; it does not create a visible Antigravity Desktop conversation.
 

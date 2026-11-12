@@ -5,7 +5,7 @@ description: Hand an approved Codex implementation plan to Antigravity Desktop t
 
 # Handoff to Antigravity Desktop
 
-For each handoff, offer Robby `Codex Review` or `No Codex Review`. Default to `Codex Review` if he does not specify. Add `--review codex` or `--review none` to the `start` command below. In no-review mode, poll until `completed_unreviewed`, then report the run ID, plan path, and AGY outcome. Stop without reading the implementation, revising, approving, or claiming verification. Steps 4-6 below apply only to Codex review mode.
+Before invoking `start`, ask Robby whether he wants `Codex Review` or `No Codex Review` at the end, and wait for his answer. If he already explicitly chose for this handoff, use that choice. Do not infer it from a previous handoff. Add the required `--review codex` or `--review none` to `start`. In no-review mode, poll until `completed_unreviewed`, then report the run ID, plan path, and AGY outcome. Stop without reading the implementation, revising, approving, or claiming verification. Steps 4-6 below apply only to Codex review mode.
 
 Use after the user approves implementation of a written plan. This skill uses the local Desktop RPC adapter at `<repo-root>\desktop_handoff.py`. Do not use computer use. The Desktop RPC is an internal interface observed in Antigravity 44.9.1 and may change after updates.
 

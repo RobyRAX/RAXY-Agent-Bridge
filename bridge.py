@@ -107,7 +107,7 @@ def main():
     start.add_argument("--plan", required=True)
     start.add_argument("--workspace", required=True)
     start.add_argument("--max-iterations", type=int, default=1)
-    start.add_argument("--review", choices=("codex", "none"), default="codex")
+    start.add_argument("--review", choices=("codex", "none"), required=True)
     revise = sub.add_parser("revise")
     revise.add_argument("--run-id", required=True)
     revise.add_argument("--feedback", required=True)
